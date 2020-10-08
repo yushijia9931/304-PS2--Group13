@@ -1,0 +1,249 @@
+---
+title: "Liberal Party Would Have Been in Power Again"
+author: "Zefeng Weng, Shijia Yu, Biwei Zheng, Zidong Yang"
+date: "10/8/2020"
+output: pdf_document: 
+    keep_tex: yes
+---
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo= TRUE)
+```
+
+# Executive Summary
+
+  We are working for the Liberal Party, and we are asked to survey Canadians in Ontario that what political party they support in this coming election. We have surveyed 200k eligible Canadians in Ontario, asking their age, gender, income, supported party, educational background, and the time that they first learned about politics. Then we picked those people who belong to Toronto's electoral district and make further analysis.
+  
+  To spread our survey to as many people as possible, we could pay for those well-known survey platforms via the internet; we also could distribute the survey in the paper, then collect responses through email or mail. If we conduct a stratified sampling method, one important thing is that we should make sure our survey can reach out to every city in Ontario because the stratum will be each city. To better advertise our survey and get more people participated, we plan to connect with local television stations or broadcast stations, pay them advertising fees to release our survey. Also, we need intermediate agencies to help us collect the responses from people. We authorize them and pay them to gather and deliver all the survey results they have collected to us regularly through online platforms or email etc. The cost we need to afford includes advertising fees and management fees for every local agency.
+  
+  Additionally, in order to reach our desired respondents as many as possible, we would make some coupon giveaway to attract more people to participate. The estimated cost for data collection is over 10,000 dollars. Indeed, we have to consider those people who aren't responding due to the parties they going to vote for might not be one of the selections on our survey, thus, we need to survey as objective as possible to make the data unbiased. If they aren't responding, it will affect our survey's fairness, which contrasts our original intention. To protect respondents' privacy, we promise that we won't collect any of respondents' information such as name, address etc. because those are sensitive somehow. From our perspective, we could have a confidentiality agreement between the company and respondents.
+  
+  This study finds out that the Liberal Party is gaining support, with an advantage in young, high-income, educated populations. The majority of liberal supporters have undergrad or above education, female supporters are 15% more than male supporters for the Liberal Party, and the majority of supporters falls in 18-30 age frame. This gives us a good portrait of a Liberal supporter: a 26 years old, master degree working female with 80K salary. 
+
+# Introduction
+
+  Studying supporters has always been an important mission for a political party. Right now The Liberal Party is the biggest in Canada by supporters, and Ontario is the most populated and most economically important region in Canada. Thus we choose to investigate liberal supporters in Ontario in this study. A study usually includes wide aspect of a voting population. Some common studying aspects are similar to a census survey. In this report, we choose several worth-studying aspects of an eligible voting population of 200k and summarize characteristics for Liberal supporters in Ontario. The general picture is described by voters' age, education level, annual income, and gender. We are expecting to see the Liberal supporters consists of young people with relatively high income and education level. Besides, we compare the data for the Liberal Party with other main parties and ensure our findings' accuracy. 
+
+
+# Survey Methodology
+
+  Basically, we are using simple random sampling, systematic sampling, and stratified sampling. 
+  
+  For SRSWOR, the greatest advantage is that when inferring the population based on sample data, the reliability of the inferred value can be objectively measured in a probabilistic way, this might be getting rid of biased results.
+  
+  For systematic sampling, it has obvious ease of operation and statistical inference function. In certain conditions, systematic sampling has better distribution, which implies that we could visualize the data set clearly.
+  
+  For stratified sampling, the advantage of this method is that the representativeness of the sample is better which means our data set from Toronto electoral district could have most likely expressed the real situation from the entire Ontario, and the sampling error is relatively small, which could be the most approached to the real value.
+  
+# Discussion & Result
+
+## Survey
+
+### Population Simulation (how to simulate population)
+  The population we target is all eligible voters in Ontario. We hope to know the features and characteristics of the people who voted for the Liberal Party and then do some graph analysis to provide overall feedback for the Liberal Party. Therefore, we designed an online survey asking for a few types of information including people's gender, the party they voted for, people's exact income and income range, age range, and education level to do an investigation in the area of Ontario. We plan to release the survey through various online platforms and authorize some local communities or agencies to publish our survey. The exact releasing method depends on the type of sampling method and we will discuss this in each sampling method section. The purpose of gathering the information through the survey is to help Petit Poll Company to figure out some statistical properties and characteristics of the people in Ontario who vote for the Liberal Party and provide the party some updates.
+
+### Each Simulation (non-response included)
+  We will keep the feedback coming until we get a reasonable number of responses, and then conduct filter process. We are interested in those individuals in Ontario that voted for the Liberal Party. Therefore, our frame is all the people filling out the survey who voted for the Liberal Party. Our sample contains 1000 people randomly selected from the frame. 
+  In the following, there are some graphs for analysis:
+  
+```{r}
+#install.packages("plotrix")
+#install.packages("sampling")
+set.seed(1)
+library(tinytex)
+library(plotrix)
+library(tidyverse)
+library(ggplot2)
+library(sampling)
+N=200000
+
+
+age=sample(c('18-30','30-40','>40','NA'),N,prob=c(0.3,0.4,0.26,0.04),replace = TRUE)
+
+gender=sample(c('Male','Female',NA),N,prob=c(0.43,0.5,0.07),replace = TRUE)
+
+vote=sample(c('Conservative','Liberal','Democratic','Others'),N,prob=c(0.3189,0.3947,0.1971,0.0893),replace = TRUE)
+
+income=sample(c('50k-100k','100k-200k','>200k',NA),N,prob=c(0.34,0.40,0.07,0.19),replace = TRUE)
+
+income2=rnorm(N,mean=60000,sd=15000)
+
+politicaltime=rnorm(N, mean=20, sd = 5)
+
+education=sample(c('Master+','Undergrads','Highschool-',NA),N,prob=c(0.4,0.35,0.2,0.05), replace = TRUE)
+
+
+
+df=data.frame(age,gender,vote,income,income2,education,politicaltime)
+
+n=1000
+```
+  
+### SRS Sampling Data Set
+  The first sampling method we use is simple random sampling method without replacement which means we will randomly select 1000 individuals from our frame to form the sample. In the sample, all the individuals are unique, which means there is no duplicated element in the sample.
+```{r}
+# srs
+set.seed(1)
+srs.ind=sample(1:N,n)
+srs.df=df[srs.ind,]
+# histogram for simple random sampling
+```
+  
+### Stratified Sampling Data Set
+  The second sampling method we use is stratified sampling method. Basically we just separate the data set by 4 stratum where people are aged 18-30, 30-40, above 40 and non-responded. Then we could make further analysis.
+```{r}
+size= (n-100)/3
+set.seed(4)
+s = strata(df, stratanames = "age", size = c(size,size,size,100),method = "srswor")
+df.str=getdata(df, s)
+```
+  
+## Simple Random Sampling & Results
+  The pie chart (Figure 1.1) represents the percentage distribution among all the people filling out the survey which is our frame. From the chart, we can conclude that the Liberal Party takes up the highest voting weight among the 200k-individual frame. This result is consistent with the current Canadian politics status which means the most supportable political party in Ontario is the Liberal Party.
+```{r}
+conservative = srs.df$vote[srs.df$vote == 'Conservative']
+Cconservative = length(conservative) /n
+liberal = srs.df$vote[srs.df$vote == 'Liberal']
+Cliberal = length(liberal)/n
+democratic = srs.df$vote[srs.df$vote == 'Democratic']
+Cdemocratic = length(democratic) / n
+Cothers = 1 - Cconservative-Cliberal-Cdemocratic
+partyvote = c(Cconservative,Cliberal,Cdemocratic,Cothers)
+lbl = c('Conservative 30.6%','Liberal 39.8%','Democratic 20.2%','Others 9.4%')
+pie3D(partyvote, labels = lbl, explode = 0.1, main = "Figure 1.1",)
+```
+
+  Given the education condition, people who support liberal earn the highest income among others; obviously, the liberal bar is the tallest bar in each of the education category. 
+```{r}
+ggplot(srs.df,aes(education,income2,fill=vote)) + geom_bar(stat = 'identity', position = 'dodge', width = 0.7)+ theme_bw()+ labs(title ="Figure 1.2")
+```
+
+  From figure 1.3, it hard to say that has obvious difference factors that affect the supported rate between conservative party and liberal party. However, if we focus on people whose income greater than 80 thousand, liberal party supporters are apparently more than conservative supporters (Blue dots are more than Red dots above the horizontal line). 
+```{r}
+top2parties = subset(srs.df, vote == c('Liberal','Conservative'))
+ggplot(top2parties, aes(politicaltime, income2, colour = vote)) + geom_point() +geom_hline(yintercept= 8e+04, linetype = 'dashed', color = 'black')+ theme_bw() + labs(title = "Figure 1.3") + ylab('Income') 
+```
+
+  Here, we pull out some subset from our sampling data set, in order to observe some specific given people for different parties supporting.
+```{r}
+liberal.count = subset(srs.df, vote == "Liberal")
+edu = subset(srs.df, education == 'Master+')
+salary = subset(srs.df, income2 > 70000)
+age.count = subset(srs.df, age == "18-30")
+```
+
+
+  From the Figure 1.4, we can see in our 1000-individual sample, people aged between 18 and 30 support the liberal party most.
+```{r}
+ggplot(data= age.count, aes(x= vote)) + geom_bar(fill = 1:4, width = 0.5) + theme_bw() + labs(title= "Figure 1.4")
+```
+
+  From the histogram of figure 1.5, the most popular political party in Ontario is the liberal party, the second is conservative and the third is democratic. This phenomenon implies that among people with a high education level such as master degree or even higher in Ontario, the liberal party is their most popular choice.
+  For more specifically, most of the supporters of liberal party have undergraduate and Master+ educational background. (Shown in figure 1.6)
+```{r}
+ggplot(data= edu, aes(x=vote )) + geom_bar(fill = 1:4, width= 0.4) + theme_bw()  + labs(title= "Figure 1.5")
+# From the histogram above, it apparently shows that Liberal party supporters have most high educated people.
+ggplot(data=liberal.count, aes(x=education)) + geom_bar(fill=c ('blue','red','orange','grey'), width = 0.4) + theme_bw() + labs(title = "Different Educational Background People Voting for Liberal") + labs(title = 'Figure 1.6')
+```
+
+  From the histogram of figure 1.7, we can see that all the most popular political party is still the liberal party. The definition of 'high-income people' refers to those who have an income over $70000/year. Therefore, we may conclude that people who have a relatively stable and high income are more willing to vote for the liberal party.
+```{r}
+ggplot(data = salary, aes(x= vote)) + geom_bar(fill = 1:4, width = 0.4) + theme_bw() + labs(title = "Figure 1.7")
+# From the histogram above, it apparently shows that Liberal party have more rich supporters.
+```
+
+  After analyzing people with high education level and high income level, we make a graph summarizing all the people in our sample which is generated through simple random sampling method, the result is as shown in the graph -- the liberal party is the most popular political party in Ontario.This phenomenon is consistent with our frame and reality, so the sample result can be considered as a relatively accurate estimation for the population. (As shown in figure 1.8)
+```{r}
+srs.df %>% ggplot(aes(x=vote))  + geom_bar(fill=1:4, width = 0.5) + theme_bw() + labs(title = "Figure 1.8")
+```
+
+  In addition, for figure 1.9, we also make a graph named 'Income Distribution of the Sample under Simple Random Sampling' generated from the 1000-individual simple random sampling sample. This chart represents the income distribution on a continuous basis of all the people who provide an answer to the question of ‘how much exactly is your income?’. As observed from the chart, the most frequent income range can be considered as 45000 to 75000 as observed from the chart. In addition, there are also some outliers who has much higher or lower income among the individuals in the sample.
+```{r}
+srs.df %>% ggplot(aes(x=income2)) + geom_histogram(binwidth = 1000, fill= "pink")+ theme_bw() + labs(title = "Figure 1.9")
+```
+
+
+  From figure 2.0, female are most likely to vote for liberal party than male does.
+```{r}
+ggplot(data=liberal.count, aes(x=gender)) + geom_bar(fill=c('red','blue','grey'), width = 0.2) + theme_bw() + labs(title = "Figure 2.0")
+```
+
+  From the histogram (figure 2.1), we can see the similar phenomenon as we conducted in that people with master or higher degrees take up the highest percentage among all the liberal supporters while undergraduate education level ranks as the second. In addition, we also generate a graph showing the income and education level between male and female, from the chart, we can see male and female take up the similar percentage weight in each education background. 
+```{r}
+ggplot(liberal.count, aes(education,income2,fill=gender)) + geom_bar(stat = "identity", position = "dodge", width = 0.3)+ggtitle("Figure 2.1") + theme_linedraw()
+```
+
+
+
+
+## Stratified Sampling & Results
+  
+  For stratified sampling(Figure 2.2), it shows simular result as simple random sampling, however, the liberal party has higher supported rate outcome.
+```{r}
+conservative = df.str$vote[df.str$vote == 'Conservative']
+Cconservative = length(conservative) /n
+liberal = df.str$vote[df.str$vote == 'Liberal']
+Cliberal = length(liberal)/n
+democratic = df.str$vote[df.str$vote == 'Democratic']
+Cdemocratic = length(democratic) / n
+Cothers = 1 - Cconservative-Cliberal-Cdemocratic
+partyvote1 = c(Cconservative,Cliberal,Cdemocratic,Cothers)
+lbl = c('Conservative 31.7%','Liberal 42.1%','Democratic 18.4%','Others 7.8%')
+pie3D(partyvote1, labels = lbl, explode = 0.1, main = "Figure 2.2")
+```
+
+
+  For figure 2.3, implying that whether the educational background, liberal party supporters have obvious higher income than other parties' supporters. On the other hand, among the four parties, liberal party also has higher educated supporters.
+```{r}
+ggplot(df.str,aes(education,income2,fill=vote)) + geom_bar(stat = 'identity', position = 'dodge', width = 0.7)+ theme_bw()+ labs(title = "Figure 2.3")
+```
+
+  Now we pull out top two supported parties(figure 2.4), liberal party and conservative party. We could clearly figure out that the supporters of liberal party has higher income (higher than 80,000) as well, which has same result of the graph 2.2 above, and the number of supporters have over 80,000 income is also greater than conservative supporters who have over 80,000 income.
+```{r}
+top2parties2 = subset(df.str, vote == c('Liberal','Conservative'))
+ggplot(top2parties2, aes(politicaltime, income2, colour = vote)) + geom_point() +geom_hline(yintercept= 8e+04, linetype = 'dashed', color = 'black')+ theme_bw() + labs(title = "Figure 2.4") + ylab('Income')
+```
+
+
+## Results
+  This report is meant to take a deeper look into the components and characteristics of the supporters of the Liberal Party. We focused on the most populated province in Canada -- Ontario. After the success of the 2019 Canadian federal election, studying the component of our supporters became even more important, considering the loss of the majority place in the House. We sampled 200,000 eligible voters in Ontario and explored the features of those who support Liberal. Our result shows a general picture for Liberal supporters, which can be described as an educated young-aged group with stable and relatively high income. It is noticeable that the female supporters are approximately 15% more than male supporters. (Shown in Graph "Frequency of Gender Vote for Liberal"). The people aged 18-30 form the majority of the supporter's population. Compared to Conservatives, there are over 25% of young voters more who would likely to support Liberal. (Shown in Graph "Most Popular Party Among Age Interval 18-30"). Among this age interval, over 70% of voters' education levels are post-secondary or higher. We also explored the voting situation in high-income groups, specifically, people who have over $70000 income per year. We find the Liberal Party has around 10% more voters than the Conservatives. Therefore, we can conclude a general picture of voters' distribution for Liberal and consider the main supporters are a group of social elites.
+   Results elaborated above imply that the trend of the Liberal Party's supporting rate is increasing apparently. Although the Conservative Party also has supporters with high income and educational background, the Liberal Party seems slightly more advantaged than the Conservative.
+   
+## Weaknesses and futher works
+  One drawback is that we have to do sampling because getting the population's data is impossible, therefore, bias and error are inevitable in the process of sampling. For a simple random sampling method, the respondent's area distribution can be biased because we may not be able to get balanced feedback among all the cities in Ontario. Thus, we intended to expand the survey area sent in the future to include as many different provinces as possible.
+  
+  Another thing is that the frame of choice in our survey might be too large, so we could have missed many details. For example, the age interval option "above 40" includes anyone from age 41 to 100, while a 41-year-old might have a drastically different political opinion compared with a 67-year-old person. Also, we assumed that people may answer question 6 "How would you think politics change your life?" subjectively, meaning that people would response based on what they feel personally instead of what happens in the real life. 
+
+# Appendix
+
+## Survey link
+ https://www.surveymonkey.com/r/YZDM57P
+
+## Survey Screenshot
+```{r, echo =FALSE, warning = FALSE, message= FALSE, fig.cap= "Survey Screenshots"}
+knitr::include_graphics('~/Desktop/IMG_6776.JPG')
+knitr::include_graphics('~/Desktop/IMG_6777.JPG')
+knitr::include_graphics('~/Desktop/IMG_6778.JPG')
+```
+
+
+
+# References
+
+- R Core Team (2020). R: A language and environment for statistical computing. R, Foundation for Statistical Computing, Vienna, Austria. URL, https://www.R-project.org/.
+- JJ Allaire and Yihui Xie and Jonathan McPherson and Javier Luraschi and Kevin Ushey and Aron Atkins and Hadley Wickham and Joe Cheng and Winston Chang and Richard Iannone (2020). rmarkdown: Dynamic Documents for R. R package version 2.3. URL https://rmarkdown.rstudio.com.
+- Lemon, J. (2006) Plotrix: a package in the red light district of R. R-News, 6(4): 8-12.
+- Yves Tillé and Alina Matei (2016). sampling: Survey Sampling. R package version 2.8.
+  https://CRAN.R-project.org/package=sampling
+- Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686,
+  https://doi.org/10.21105/joss.01686
+- H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.
+- Name: SurveyMonkey Inc.
+Location: San Mateo, California, USA
+Main Website: www.surveymonkey.com
+-Yihui Xie (2020). tinytex: Helper Functions to Install and Maintain TeX
+  Live, and Compile LaTeX Documents. R package version 0.26.
+
+  Yihui Xie (2019) TinyTeX: A lightweight, cross-platform, and
+  easy-to-maintain LaTeX distribution based on TeX Live. TUGboat 40 (1):
+  30--32. http://tug.org/TUGboat/Contents/contents40-1.html
+
